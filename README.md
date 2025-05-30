@@ -28,3 +28,15 @@ REACT_APP_PASSWORD=
 Build with `mvn clean package` (this will automatically deploy it), then open http://localhost:8080/wildfly-model-explorer/
 
 ## Troubleshooting
+```
+Module not found: Error: Default condition should be last one
+```
+
+Open `src/main/explorer/node_modules/digest-fetch/package.json` and look for 
+```
+"exports": {
+  "default": "./digest-fetch-src.js",
+  "types": "./digest-fetch-src.d.ts"
+},
+```
+put the `"default"` property to the bottom
