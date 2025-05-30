@@ -1,0 +1,33 @@
+.App {
+  background-color: #282c34;
+  color: white;
+}
+
+button {
+  background-color: #282c34;
+  color: white;
+  font-size: 20px;
+  border: 2px solid white;
+  margin: 10px 4px;
+}
+
+.output {
+
+}
+
+.address {
+  padding: 10px;
+}
+
+ul {
+  text-align: initial;
+  font-size: 26px;
+}
+
+ul ul {
+  font-size: 90%;
+}
+
+:is(.capability, .attribute, .child) > span {
+  font-family: monospace;
+}
