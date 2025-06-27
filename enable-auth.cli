@@ -1,0 +1,3 @@
+/core-service=management/management-interface=http-interface:list-add(name=allowed-origins,value=http://localhost:8080)
+/core-service=management/management-interface=http-interface:list-add(name=constant-headers,value={headers=[{name=Access-Control-Expose-Headers,value=WWW-Authenticate}],path=/management})
+reload

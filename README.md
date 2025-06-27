@@ -3,18 +3,7 @@ Tool to examine the WildFly resource model, specifically the resource-descriptio
 ## Requirements 
 
 ### WildFly settings
-in CLI:
-```
-/core-service=management/management-interface=http-interface\
-:list-add(name=allowed-origins,value=http://localhost:8080)
-
-/core-service=management/management-interface=http-interface\
-:list-add(name=constant-headers,\
-value={headers=[{name=Access-Control-Expose-Headers,\
-value=WWW-Authenticate}],path=/management})
-
-reload
-```
+Pass `enable-auth.cli` to CLI (`jboss-cli.sh -c --file=<dir>/enable-auth.cli`) 
 this allows the app to be authenticated and to access management resources
 
 ### ENV
