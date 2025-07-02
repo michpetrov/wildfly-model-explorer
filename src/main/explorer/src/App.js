@@ -5,61 +5,63 @@ import './App.css';
 
 import DigestClient from 'digest-fetch';
 
+const printProperties = ({ description,             // string
+    deprecated,                                     // object
+    stability,                                      // string
+    storage,                                        // string
+    'access-constraints': accessConstraints,        // object
+    ...rest }) => {
+
+  const printRest = (rest) => {
+    return rest.attributes ? printChildProperties(rest) : printAttributeProperties(rest);
+  }
+
+  return (
+    <ul>
+      { makeLi('Description: ' + description) }
+      { deprecated && printDeprecated(deprecated) }
+      { stability && makeLi('Stability: ' + stability) }
+      { storage && makeLi('Storage: ' + storage) }
+      { accessConstraints && makeLi('Access constraints: ' + JSON.stringify(accessConstraints)) }
+      { printRest(rest) }
+    </ul>
+  );
+}
+
 const printChildren = (children) => {
   let items = [];
 
   for (let [key, value] of Object.entries(children)) {
     for (let [descrKey, descrValue] of Object.entries(value['model-description'])) {
-      items.push(makeLi(`${key}=${descrKey}`, 'child',
-        printChildDescription(descrValue)));
+      items.push(makeLi(`${key}=${descrKey}`, 'child', printProperties(descrValue)));
     }
   }
 
   return makeLi('Children: ', 'children', <ul>{ items }</ul>);
 }
 
-/**
-Child-desc:
-    - attributes (object of attrs)
-    - capabilities (array of caps)
-    - children (object of chlds)
-    - description: string
-    - notifications: ?
-    - operations: ?
-    - stability: string
-*/
-const printChildDescription = ({ attributes,
-    capabilities,
-    children,
-    description,
-    notifications,
-    operations,
-    deprecated,
-    stability,
-    storage,
-    'access-constraints': accessContraints,
-    'min-occurs': minOccurs,
-    'max-occurs': maxOccurs,
+const printChildProperties = ({ attributes,   // object
+    capabilities,                             // array
+    children,                                 // object
+    notifications,                            // object
+    operations,                               // object
+    'min-occurs': minOccurs,                  // number
+    'max-occurs': maxOccurs,                  // number
     ...rest }) => {
 
   const list = restList(rest);
 
   return (
-    <ul>
-      { makeLi('Description: ' + description) }
+    <>
       { capabilities?.length && printCapabilities(capabilities) }
       { Object.keys(attributes).length > 0 && printAttributes(attributes) }
       { Object.keys(children).length > 0 && printChildren(children) }
-      { storage && makeLi('Storage: ' + storage) }
       { notifications && makeLi('Notifications: ' + notifications) }
       { operations && makeLi('Operations: ' + operations) }
-      { deprecated && printDeprecated(deprecated) }
-      { stability && makeLi('Stability: ' + stability) }
-      { accessContraints && makeLi('Access constraints: ' + JSON.stringify(accessContraints)) }
       { minOccurs && makeLi('Min occurs: ' + minOccurs) }
       { maxOccurs && makeLi('Max occurs: ' + maxOccurs) }
       { /*list*/ }
-    </ul>
+    </>
   );
 }
 
@@ -67,56 +69,36 @@ const printAttributes = (attrs) => {
   let list = [];
 
   for (let attr in attrs) {
-    list.push(makeLi(attr, 'attribute', printAttr(attrs[attr])));
+    list.push(makeLi(attr, 'attribute', printProperties(attrs[attr])));
   }
 
   return makeLi('Attributes: ', 'attributes', <ul>{ list }</ul>);
 }
 
-/**
-Attr:
-    - access-type: string
-    - attribute-group: string
-    - capability-reference: string
-    - description: string
-    - expressions-allowed: bool
-    - max-length, min-length: number
-    - nillable, required: bool
-    - restart-required: string
-    - stability: string
-    - storage: string
-    - type: object with TYPE_MODEL_VALUE: string
-*/
-const printAttr = ({ 'access-type': accessType,
-    'attribute-group': attributeGroup,
-    'capability-reference': capabilityReference,
-    description,
-    'expressions-allowed': expressionsAllowed,
-    nillable,
-    required,
-    'restart-required': restartRequired,
-    stability,
-    storage,
-    type,
-    'value-type': valueType,
-    'default': def,
-    allowed,
-    alternatives,
-    requires,
-    unit,
-    deprecated,
-    'nil-significant': nilSignifcant,
-    'filesystem-path': filesystemPath,
-    'access-constraints': accessContraints,
-    'capability-reference-pattern-elements': capRef,
+const printAttributeProperties = ({ 'access-type': accessType,     // string
+    'attribute-group': attributeGroup,                             // string
+    'capability-reference': capabilityReference,                   // string
+    'expressions-allowed': expressionsAllowed,                     // bool
+    nillable,                                                      // bool
+    required,                                                      // bool
+    'restart-required': restartRequired,                           // bool
+    type,                                                          // object
+    'value-type': valueType,                                       // string || object
+    'default': def,                                                // string
+    allowed,                                                       // array
+    alternatives,                                                  // array
+    requires,                                                      // array
+    unit,                                                          // string
+    'nil-significant': nilSignifcant,                              // bool
+    'filesystem-path': filesystemPath,                             // string
+    'capability-reference-pattern-elements': capRef,               // array
     ...rest }) => {
 
   const list = restList(rest);
   const modelType = getType(type);
 
   return (
-    <ul>
-      { makeLi('Description: ' + description) }
+    <>
       { makeLi('Type: ' + modelType) }
       { constraints(modelType, rest) }
       { unit && makeLi('Unit: ' + unit) }
@@ -129,17 +111,13 @@ const printAttr = ({ 'access-type': accessType,
       { makeLi('Nillable: ' + nillable) }
       { makeLi('Expressions allowed: ' + expressionsAllowed) }
       { restartRequired && makeLi('Restart required: ' + restartRequired) }
-      { storage && makeLi('Storage: ' + storage) }
       { accessType && makeLi('Access Type: ' + accessType) }
       { attributeGroup && makeLi('Attribute Group: ' + attributeGroup) }
-      { makeLi('Stability: ' + stability) }
-      { deprecated && printDeprecated(deprecated) }
-      { accessContraints && makeLi('Access constraints: ' + JSON.stringify(accessContraints)) }
       { nilSignifcant && makeLi('Nil Significant: ' + nilSignifcant) }
       { filesystemPath && makeLi('Filesystem Path: ' + filesystemPath) }
       { capRef && makeLi('Capability Reference Pattern Elements: ' + capRef) }
       { /*list*/ }
-    </ul>
+    </>
   );
 }
 
@@ -181,7 +159,7 @@ const getType = (type) => type['TYPE_MODEL_VALUE'];
 
 const constraints = (type, { min, max,
     'min-length': minLength,
-    'max-length': maxLength}) => {
+    'max-length': maxLength }) => {
 
   let list = null;
 
@@ -251,7 +229,7 @@ const App = () => {
       .then(data => data.json())
       .then(data => {
         console.log(data);
-        setModel(printChildDescription(data))
+        setModel(printProperties(data))
       })
       .catch(e => console.log(e));
 
