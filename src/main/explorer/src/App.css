@@ -1,6 +1,7 @@
 .App {
   background-color: #282c34;
   color: white;
+  min-height: 100vh;
 }
 
 button {
@@ -30,4 +31,12 @@ ul ul {
 
 :is(.capability, .attribute, .child) > span {
   font-family: monospace;
+}
+
+#filter {
+  position: fixed;
+  top: 0;
+  right: 0;
+  border: 2px solid #fff;
+  padding: 10px;
 }
