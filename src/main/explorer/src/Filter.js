@@ -48,7 +48,7 @@ const Filter = (options) => {
           <CheckBox id="depr" label="Deprecated" { ...options } />
           <CheckBox id="stab" label="Stability" { ...options } />
           <CheckBox id="acon" label="Acc. Constr." { ...options } />
-          <fieldset>
+          <fieldset id="filter-attributes">
             <legend>Attributes</legend>
             <CheckBox id="acctype" label="Access Type" { ...options } />
             <CheckBox id="attgroup" label="Attribute Group" { ...options } />
@@ -66,7 +66,7 @@ const Filter = (options) => {
             <Select id="type" label="Value Type" list={ modelTypes } { ...options } />
             <Select id="restreq" label="Restart Required" list={ [] } { ...options } />
           </fieldset>
-          <fieldset>
+          <fieldset id="filter-children">
             <legend>Children</legend>
             <CheckBox id="attrs" label="Attributes" { ...options } />
             <CheckBox id="chlds" label="Children" { ...options } />

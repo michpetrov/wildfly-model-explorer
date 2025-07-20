@@ -39,4 +39,16 @@ ul ul {
   right: 0;
   border: 2px solid #fff;
   padding: 10px;
+
+  input, select {
+    margin-right: 10px;
+  }
+
+  #filter-attributes {
+    column-count: 2;
+
+    label {
+      display:block;
+    }
+  }
 }
