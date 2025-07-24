@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Datalist from './Datalist';
 import Filter from './Filter';
 import logo from './logo.svg';
@@ -263,6 +263,7 @@ const App = () => {
     exprall: 'OFF',
     restreq: 'OFF'
   }
+  const [subs, setSubs] = useState([]);
   const [data, setData] = useState(null);
   const filterHook = useState(defaultFilter);
   const client = new DigestClient(process.env.REACT_APP_USERNAME,process.env.REACT_APP_PASSWORD);
@@ -270,8 +271,21 @@ const App = () => {
   let target = "subsystem/datasources";
   const url = 'http://localhost:9990/management/';
   const op = '?operation=resource-description&recursive=true';
+  const subsOp = '?operation=resource'; // HTTP API doesn't support "children-names" operation
 
   const inputRef = useRef(null);
+
+  useEffect(() => client.fetch(url + subsOp)
+      .then(data => data.json())
+      .then(data => {
+        let subsystems = [];
+        for (let sub in data['subsystem']) {
+          subsystems.push(sub);
+        }
+        setSubs(subsystems);
+      })
+      .catch(e => console.log(e)),
+    [1]);
 
   const fetchData = () => client.fetch(url + inputRef.current.value + op)
       .then(data => data.json())
@@ -286,7 +300,7 @@ const App = () => {
   return (
     <div className="App">
       <div className="address">
-        <span>{ url }</span><Datalist inputRef={ inputRef } defaultValue={ target }/><span>{ op }</span>
+        <span>{ url }</span><Datalist inputRef={ inputRef } list={ subs } defaultValue={ target }/><span>{ op }</span>
       </div>
       <button onClick={ fetchData }>Fetch</button>
       <Filter filterHook={ filterHook } />
