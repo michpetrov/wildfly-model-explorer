@@ -36,10 +36,15 @@ const modelTypes = [
     "STRING"
 ];
 
+const boolSelectTypes = [
+    "OFF",
+    "TRUE",
+    "FALSE"
+]
+
 const Filter = (options) => {
 
     // TODO: Select for "storage" (only 2 options?)
-    // TODO: attributes
 
     return (
       <div id="filter">
@@ -53,7 +58,6 @@ const Filter = (options) => {
             <CheckBox id="acctype" label="Access Type" { ...options } />
             <CheckBox id="attgroup" label="Attribute Group" { ...options } />
             <CheckBox id="capref" label="Cap. Ref." { ...options } />
-            <CheckBox id="exprall" label="Expr. Allowed" { ...options } />
             <CheckBox id="nill" label="Nilable" { ...options } />
             <CheckBox id="default" label="Default" { ...options } />
             <CheckBox id="allow" label="Allowed" { ...options } />
@@ -64,7 +68,8 @@ const Filter = (options) => {
             <CheckBox id="fspath" label="FS Path" { ...options } />
             <CheckBox id="caprefel" label="Cap. Ref. Pat. El." { ...options } />
             <Select id="type" label="Value Type" list={ modelTypes } { ...options } />
-            <Select id="restreq" label="Restart Required" list={ [] } { ...options } />
+            <Select id="exprall" label="Expr. Allowed" list={ boolSelectTypes } { ...options } />
+            <Select id="restreq" label="Restart Required" list={ boolSelectTypes } { ...options } />
           </fieldset>
           <fieldset id="filter-children">
             <legend>Children</legend>

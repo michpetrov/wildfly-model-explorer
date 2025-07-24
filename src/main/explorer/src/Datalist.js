@@ -1,3 +1,4 @@
+// TODO: fetch this from server
 const subsystems = [
   "batch-jberet",
   "bean-validation",

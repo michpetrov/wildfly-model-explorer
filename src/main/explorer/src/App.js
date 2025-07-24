@@ -60,9 +60,6 @@ const printChildProperties = ({ attributes,   // object
     ...rest }, filter) => {
 
   const list = restList(rest);
-
-// TODO: min/max on one row
-
   const attrList = printAttributes(attributes, filter);
   const childList = printChildren(children, filter);
 
@@ -77,11 +74,16 @@ const printChildProperties = ({ attributes,   // object
       { (filter['chlds'] && Object.keys(children).length > 0) && childList }
       { (filter['not'] && notifications) && makeLi('Notifications: ' + notifications) }
       { (filter['ope'] && operations) && makeLi('Operations: ' + operations) }
-      { (filter['childminmax'] && minOccurs) && makeLi('Min occurs: ' + minOccurs) }
-      { (filter['childminmax'] && maxOccurs) && makeLi('Max occurs: ' + maxOccurs) }
+      { (filter['childminmax'] && (minOccurs || maxOccurs)) && printOccurrence(minOccurs, maxOccurs) }
       { /*list*/ }
     </>
   );
+}
+
+const printOccurrence = (minOccurs, maxOccurs) => {
+  const min = minOccurs != null ? minOccurs : '?';
+  const max = maxOccurs != null ? maxOccurs : '?';
+  return makeLi(`Occurrence: ${min}-${max}` );
 }
 
 const printAttributes = (attrs, filter) => {
@@ -123,14 +125,21 @@ const printAttributeProperties = ({ 'access-type': accessType,     // string
   const modelType = getType(type);
 
   // todo: all selectable values
-  if (filter['type'] !== 'ALL' && filter['type'] !== modelType) {
+  if (!isSelected('ALL', filter['type'], modelType)) {
+    return null;
+  }
+
+  if (!isSelected('off', filter['exprall']?.toLowerCase(), expressionsAllowed)) {
+    return null;
+  }
+
+  if (!isSelected('off', filter['restreq']?.toLowerCase(), restartRequired)) {
     return null;
   }
 
   return (
     <>
-      { makeLi('Type: ' + modelType) }
-      { constraints(modelType, rest) }
+      { makeLi('Type: ' + modelType + printConstraints(modelType, rest)) }
       { (filter['unit'] && unit) && makeLi('Unit: ' + unit) }
       { ['OBJECT', 'LIST'].includes(modelType) && printValueType(valueType, filter) }
       { (filter['default'] && def != null) && makeLi('Default: ' + def) }
@@ -139,8 +148,8 @@ const printAttributeProperties = ({ 'access-type': accessType,     // string
       { (filter['req'] && requires) && makeLi('Requires: ' + requires) }
       { (filter['capref'] && capabilityReference) && makeLi('CapabilityReference: ' + capabilityReference) }
       { filter['nill'] && makeLi('Nillable: ' + nillable) }
-      { makeLi('Expressions allowed: ' + expressionsAllowed) }
-      { restartRequired && makeLi('Restart required: ' + restartRequired) }
+      { (filter['exprall'] !== 'OFF') && makeLi('Expressions allowed: ' + expressionsAllowed) }
+      { (filter['restreq'] !== 'OFF') && makeLi('Restart required: ' + restartRequired) }
       { (filter['acctype'] && accessType) && makeLi('Access Type: ' + accessType) }
       { (filter['attgroup'] && attributeGroup) && makeLi('Attribute Group: ' + attributeGroup) }
       { (filter['nilsig'] && nilSignificant) && makeLi('Nil Significant: ' + nilSignificant) }
@@ -180,32 +189,36 @@ const makeLi = (text, className, subList) => {
 
 const getType = (type) => type['TYPE_MODEL_VALUE'];
 
-const constraints = (type, { min, max,
+const printConstraints = (type, { min, max,
     'min-length': minLength,
     'max-length': maxLength }) => {
 
-  let list = null;
+  let minToCheck, maxToCheck;
 
   switch(type) {
     case 'INT':
     case 'LONG':
-      if (min != null || max != null) {
-        list = <>
-                 { min != null && makeLi('Min: ' + min.toLocaleString()) }
-                 { max != null && makeLi('Max: ' + max.toLocaleString()) }
-               </>
-      }
+      minToCheck = min;
+      maxToCheck = max;
       break;
     case 'STRING':
-      if (minLength != null || maxLength != null) {
-        list = <>
-                 { minLength != null && makeLi('Min: ' + minLength.toLocaleString()) }
-                 { maxLength != null && makeLi('Max: ' + maxLength.toLocaleString()) }
-               </>
-      }
+      minToCheck = minLength;
+      maxToCheck = maxLength;
+      if (minToCheck === 1 && maxToCheck == 2147483647) return ""; // default STRING size, don't show
+      break;
+    default:
+      return "";
   }
 
-  return list;
+  const minValue = minToCheck != null ? minToCheck.toLocaleString() : '?';
+  const maxValue = maxToCheck != null ? maxToCheck.toLocaleString() : '?';
+
+  if (minValue === maxValue) {
+    if (minValue === '?') return ""; // no constraints
+    return `(${minValue})`;
+  }
+
+  return ` (${minValue}-${maxValue})`;
 }
 
 const printDeprecated = (deprecated) => {
@@ -238,11 +251,17 @@ const restList = ({ min, max,
   return <>{ Object.entries(list).map(([key, value]) => <li>{ `§${key}: ${JSON.stringify(value)}` }</li>) }</>;
 }
 
+const isSelected = (displayAll, filter, prop) => {
+  return filter === displayAll || filter == (prop + ""); // bool conversion
+}
+
 const App = () => {
   const defaultFilter = {
     attrs: true,
     chlds: true,
-    type: "ALL"
+    type: 'ALL',
+    exprall: 'OFF',
+    restreq: 'OFF'
   }
   const [data, setData] = useState(null);
   const filterHook = useState(defaultFilter);
