@@ -73,7 +73,7 @@ const printChildProperties = ({ attributes,   // object
       { (filter['attrs'] && Object.keys(attributes).length > 0) && attrList }
       { (filter['chlds'] && Object.keys(children).length > 0) && childList }
       { (filter['not'] && notifications) && makeLi('Notifications: ' + notifications) }
-      { (filter['ope'] && operations) && makeLi('Operations: ' + operations) }
+      { (filter['ope'] && operations) && printOperations(operations, filter) }
       { (filter['childminmax'] && (minOccurs || maxOccurs)) && printOccurrence(minOccurs, maxOccurs) }
       { /*list*/ }
     </>
@@ -255,6 +255,32 @@ const isSelected = (displayAll, filter, prop) => {
   return filter === displayAll || filter == (prop + ""); // bool conversion
 }
 
+const COMMON_OPS = ['add', 'remove', 'list-add', 'list-remove',
+  'map-clear', 'map-put', 'map-get', 'map-remove']
+
+const printOperations = (operations, { idx, ndfl }) => {
+  if (!operations) {
+    return null;
+  }
+
+  let ops = [];
+
+  Object.entries(operations).forEach(([key, value]) => {
+    if (!(ndfl && COMMON_OPS.includes(key))) {
+      if (value?.['request-properties']?.['add-index']) {
+        key = "add (indexed)"
+      }
+      ops.push(makeLi(key))
+    }
+  });
+
+  if (!ops.length) {
+    return null;
+  }
+
+  return makeLi("Operations: ", 'operations', <ul>{ ops }</ul>);
+}
+
 const App = () => {
   const defaultFilter = {
     attrs: true,
@@ -268,9 +294,9 @@ const App = () => {
   const filterHook = useState(defaultFilter);
   const client = new DigestClient(process.env.REACT_APP_USERNAME,process.env.REACT_APP_PASSWORD);
 
-  let target = "subsystem/datasources";
+  let target = "subsystem/jgroups";
   const url = 'http://localhost:9990/management/';
-  const op = '?operation=resource-description&recursive=true';
+  const op = '?operation=resource-description&recursive=true&operations=true&inherited=false';
   const subsOp = '?operation=resource'; // HTTP API doesn't support "children-names" operation
 
   const inputRef = useRef(null);

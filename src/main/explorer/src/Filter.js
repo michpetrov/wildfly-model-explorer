@@ -78,8 +78,11 @@ const Filter = (options) => {
             <hr/>
             <CheckBox id="cap" label="Capabilities" { ...options } />
             <CheckBox id="not" label="Notifications" { ...options } />
-            <CheckBox id="ope" label="Operations" { ...options } />
             <CheckBox id="childminmax" label="Min/Max Occurs" { ...options } />
+          </fieldset>
+          <fieldset id="filter-operations">
+            <legend><CheckBox id="ope" label="Operations" { ...options } /></legend>
+            <CheckBox id="ndfl" label="Non-default" { ...options } />
           </fieldset>
         </form>
       </div>
