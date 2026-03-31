@@ -9,8 +9,8 @@ this allows the app to be authenticated and to access management resources
 ### ENV
 Create `.env` file in `src/main/explorer` and fill in the username and password (the same you use for web console)
 ```
-REACT_APP_USERNAME=
-REACT_APP_PASSWORD=
+VITE_EXPL_USERNAME=
+VITE_EXPL_PASSWORD=
 ```
 
 ## Building the app

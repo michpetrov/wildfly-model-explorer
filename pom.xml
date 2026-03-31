@@ -96,7 +96,7 @@
                     <webResources>
                         <resource>
                             <!-- this is relative to the pom.xml directory -->
-                            <directory>src/main/explorer/build</directory>
+                            <directory>src/main/explorer/dist</directory>
                         </resource>
                     </webResources>
                 </configuration>

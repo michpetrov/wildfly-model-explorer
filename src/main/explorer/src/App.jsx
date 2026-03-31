@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
-import Datalist from './Datalist';
-import Filter from './Filter';
-import { printModel } from './FilterWriter';
+import Datalist from './Datalist.jsx';
+import Filter from './Filter.jsx';
+import { printModel } from './FilterWriter.jsx';
 import './App.css';
 
 import DigestClient from 'digest-fetch';
@@ -15,7 +15,7 @@ const App = () => {
   const [subs, setSubs] = useState([]);
   const [data, setData] = useState(null);
   const filterHook = useState(defaultFilter);
-  const client = new DigestClient(process.env.REACT_APP_USERNAME,process.env.REACT_APP_PASSWORD);
+  const client = new DigestClient(import.meta.env.VITE_EXPL_USERNAME,import.meta.env.VITE_EXPL_PASSWORD);
 
   let target = "subsystem/jgroups";
   const url = 'http://localhost:9990/management/';
