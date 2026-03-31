@@ -20,6 +20,19 @@ button {
   padding: 10px;
 }
 
+.alert {
+  padding: 10px;
+  margin: 10px;
+  border: 2px solid white;
+  font-size: 20px;
+  width: 50vw;
+}
+
+.alert.error {
+  border-color: red;
+  background-color: lightcoral;
+}
+
 ul {
   text-align: initial;
   font-size: 26px;
