@@ -70,9 +70,9 @@ const App = () => {
     <div className="App">
       <div className="address">
         <span>{ url }</span><Datalist inputRef={ inputRef } list={ subs } defaultValue={ target }/><span>{ op }</span>
+        <button onClick={ fetchData }>Fetch</button>
       </div>
       { alert.message && <Alert type={alert.type} message={alert.message} /> }
-      <button onClick={ fetchData }>Fetch</button>
       <Filter filterHook={ filterHook } />
       { model && <div className="output">{ model }</div> }
     </div>

@@ -1,23 +1,20 @@
 .App {
-  background-color: #282c34;
+  --bg-color: #282c34;
+  background-color: var(--bg-color);
   color: white;
   min-height: 100vh;
 }
 
-button {
-  background-color: #282c34;
-  color: white;
-  font-size: 20px;
-  border: 2px solid white;
-  margin: 10px 4px;
-}
-
-.output {
-
-}
-
 .address {
   padding: 10px;
+
+  button {
+    background-color: black;
+    color: white;
+    font-size: 20px;
+    border: 2px solid white;
+    margin: 4px 10px;
+  }
 }
 
 .alert {
@@ -26,24 +23,28 @@ button {
   border: 2px solid white;
   font-size: 20px;
   width: 50vw;
+
+  &.error {
+    border-color: red;
+    background-color: lightcoral;
+  }
 }
 
-.alert.error {
-  border-color: red;
-  background-color: lightcoral;
-}
+.output {
+  width: 64vw;
 
-ul {
-  text-align: initial;
-  font-size: 26px;
-}
+  ul {
+    text-align: initial;
+    font-size: 26px;
 
-ul ul {
-  font-size: max(90%,16px);
-}
+    ul {
+      font-size: max(90%, 16px);
+    }
+  }
 
-:is(.capability, .attribute, .child) > span {
-  font-family: monospace;
+  :is(.capability, .attribute, .child) > span {
+    font-family: monospace;
+  }
 }
 
 #filter {
@@ -53,16 +54,17 @@ ul ul {
   border: 2px solid #fff;
   padding: 10px;
   max-width: 50%;
+  background-color: black;
 
   input, select {
     margin-right: 10px;
   }
 
-  #filter-attributes {
+  fieldset {
     column-count: 2;
 
     label {
-      display:block;
+      display: block;
     }
   }
 }
