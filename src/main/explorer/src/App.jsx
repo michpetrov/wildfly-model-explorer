@@ -64,6 +64,10 @@ const App = () => {
         setAlert({type: 'error', message: e.message});
       });
 
+  const copyUrl = () => {
+    navigator.clipboard.writeText(url + inputRef.current.value + op);
+  }
+
   const model = data ? printModel(data, filterHook[0]) : null;
 
   return (
@@ -71,6 +75,7 @@ const App = () => {
       <div className="address">
         <span>{ url }</span><Datalist inputRef={ inputRef } list={ subs } defaultValue={ target }/><span>{ op }</span>
         <button onClick={ fetchData }>Fetch</button>
+        <button onClick={ copyUrl }>Copy URL</button>
       </div>
       { alert.message && <Alert type={alert.type} message={alert.message} /> }
       <Filter filterHook={ filterHook } />
