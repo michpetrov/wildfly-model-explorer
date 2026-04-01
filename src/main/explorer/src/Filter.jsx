@@ -3,7 +3,7 @@ const CheckBox = ({ id, label, filterHook: [filter, updateFilter] }) => {
       <label>
         <input type="checkbox" name={ id }
             checked={ filter[id] }
-            onClick={() => updateFilter({...filter, [id]: !filter[id]})}/>
+            onChange={() => updateFilter({...filter, [id]: !filter[id]})}/>
         { label }
       </label>
     );

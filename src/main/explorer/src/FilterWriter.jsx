@@ -175,32 +175,46 @@ const printConstraints = (type, { min, max,
   'min-length': minLength,
   'max-length': maxLength }) => {
 
+  const MAX = 2147483647;
+
   let minToCheck, maxToCheck;
+
+  const printNumber = (number) => {
+    if (number == null) return '?';
+    if (number === MAX) return 'MAX_INT';
+    return number.toLocaleString();
+  }
 
   switch(type) {
     case 'INT':
     case 'LONG':
       minToCheck = min;
       maxToCheck = max;
+      if (maxToCheck === MAX) return ` (> ${printNumber(minToCheck)})`;
       break;
     case 'STRING':
       minToCheck = minLength;
       maxToCheck = maxLength;
-      if (minToCheck === 1 && maxToCheck === 2147483647) return ""; // default STRING size, don't show
+      if (maxToCheck === MAX) {
+        switch (minToCheck) {
+          case 0: return "";
+          case 1: return " (non-empty)";
+        }
+      } // default STRING sizes
       break;
     default:
       return "";
   }
 
-  const minValue = minToCheck != null ? minToCheck.toLocaleString() : '?';
-  const maxValue = maxToCheck != null ? maxToCheck.toLocaleString() : '?';
+  const minValue = printNumber(minToCheck);
+  const maxValue = printNumber(maxToCheck);
 
   if (minValue === maxValue) {
     if (minValue === '?') return ""; // no constraints
     return `(${minValue})`;
   }
 
-  return ` (${minValue}-${maxValue})`;
+  return ` (${minValue} - ${maxValue})`;
 }
 
 const printDeprecated = ({since, reason}, name, type) => {
