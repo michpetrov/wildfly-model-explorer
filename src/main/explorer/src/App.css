@@ -44,6 +44,16 @@
 
   :is(.capability, .attribute, .child) > span {
     font-family: monospace;
+    background-color: lightgrey;
+    color: var(--bg-color);
+  }
+
+  .description > span {
+    color: yellowgreen;
+  }
+
+  .deprecated > span {
+    color: lightcoral;
   }
 }
 

@@ -23,7 +23,7 @@ export const printModel = (model, filter) => {
   let areOthersSelected = false;
 
   Object.entries(filter).forEach(([key, value]) => {
-    if (!['attr.show', 'chld.show', 'description'].includes(key) && value && value !== 'OFF') {
+    if (!['attr.show', 'chld.show', 'description'].includes(key) && value && value !== 'NONE') {
       areOthersSelected = true;
     }
   });
@@ -203,13 +203,8 @@ const printConstraints = (type, { min, max,
   return ` (${minValue}-${maxValue})`;
 }
 
-const printDeprecated = ({since, reason}, name) => {
-  const list = [
-    makeLi(`Since: ${since}`),
-    makeLi(`Reason: ${reason}`)
-  ];
-
-  return makeLi(`${name}: `, 'deprecated', <ul>{ list }</ul>);
+const printDeprecated = ({since, reason}, name, type) => {
+  return makeLi(`${name} (${since}+): ${reason}`, type);
 }
 
 const printValueType = (valueType, filter) => {
@@ -236,7 +231,7 @@ const restList = ({ min, max,
   return <>{ Object.entries(list).map(([key, value]) => <li>{ `§${key}: ${JSON.stringify(value)}` }</li>) }</>;
 }
 
-const printOperations = (operations, name, filterValue) => {
+const printOperations = (operations, name, type, filterValue) => {
   let ops = [];
 
   if (filterValue === 'NONE') {
@@ -291,13 +286,13 @@ const makeFnObject = (filterFn, printFn = simplePrint) => {
 const capitalize = name => name.charAt(0).toUpperCase() + name.slice(1);
 const propToName = (name) => name.split('-').map(capitalize).join(' ');
 
-const simplePrint = (value, name) => makeLi(`${name}: ${value}`);
+const simplePrint = (value, name, type) => makeLi(`${name}: ${value}`, type);
 
 const dictionaryFn = {
   'description': makeFnObject(isSelected),
   'deprecated': makeFnObject(isPresent, printDeprecated),
   'stability': makeFnObject(isEqualOrAll),
-  'access-constraints': makeFnObject(isPresent, (value, name) => makeLi(`${name}: ${JSON.stringify(value)}`)),
+  'access-constraints': makeFnObject(isEqualOrAll, (value, name) => makeLi(`${name}: ${JSON.stringify(value)}`)),
 
   'capabilities': makeFnObject(hasItems, printCapabilities),
   'notifications': makeFnObject(hasItems),
@@ -330,7 +325,7 @@ const printProperty = (resource, filter, name, filterPrefix) => {
   const value = resource[name],
       filterValue = filter[filterName],
       printFn = fn.printFn || simplePrint;
-  return fn.filterFn(value, filterValue) && printFn(value, propToName(name), filterValue);
+  return fn.filterFn(value, filterValue) && printFn(value, propToName(name), name, filterValue);
 }
 
 const printProperties = (propNames, resource, filter, filterPrefix) => {
