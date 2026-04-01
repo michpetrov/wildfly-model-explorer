@@ -1,9 +1,9 @@
 const makeLi = (text, className, subList) => {
   return (
-      <li className={ className }>
-        <span>{ text }</span>
-        { subList }
-      </li>
+    <li className={ className }>
+      <span onClick={ subList ? e => e.target.nextSibling.classList.toggle('collapsed') : undefined }>{ text }</span>
+      { subList }
+    </li>
   );
 }
 

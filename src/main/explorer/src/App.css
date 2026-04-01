@@ -31,15 +31,37 @@
 }
 
 .output {
+  interpolate-size: allow-keywords;
   width: 64vw;
+
+  li {
+    transition: all 0.5s;
+    &:has(> ul) {
+      list-style: disclosure-open;
+    }
+
+    &:has(> ul.collapsed) {
+      list-style-type: disclosure-closed;
+    }
+  }
 
   ul {
     text-align: initial;
     font-size: 26px;
+    transition: height 0.25s;
 
     ul {
       font-size: max(90%, 16px);
     }
+
+    &.collapsed {
+      height: 0;
+      overflow: hidden;
+    }
+  }
+
+  li > span:has(+ ul) {
+    cursor: pointer;
   }
 
   :is(.capability, .attribute, .child) > span {
